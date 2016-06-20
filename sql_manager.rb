@@ -1,6 +1,6 @@
 require 'pry'
 require 'sqlite3'
-
+# => Worked with George
 
 class Book
   attr_accessor :title, :page_count, :genre, :price
@@ -44,7 +44,12 @@ class Book
   end
 
   def save
-    # Your code here
+    sql = <<-SQL
+      INSERT INTO books (title, page_count, genre, price)
+      VALUES (?, ?, ?, ?)
+    SQL
+    db.execute(sql, self.title, self.page_count, self.genre, self.price)
+    @id = db.execute("SELECT last_insert_rowid() FROM books")[0][0]
   end
 
   def ==(other_object)
@@ -53,12 +58,18 @@ class Book
 
 
   def destroy
-    #  Your code here
+    sql = <<-SQL
+      DELETE * FROM books WHERE id = ?
+    SQL
+    db.execute(sql, self.id)
   end
 
 
   def self.find(id)
-    # Your code here
+    sql = <<-SQL
+    SELECT * FROM books WHERE id = ?;
+    SQL
+    db.execute(sql, self.id)
   end
 
 
@@ -69,11 +80,24 @@ class Book
   private
 
   def insert
-    # Your code here
+
+    sql = <<-SQL
+      INSERT INTO books (title, page_count, genre, price) VALUES (?, ?, ?, ?)
+    SQL
+    db.execute(sql, self.title, self,page_count, self.genre, self.price)
+#   @id = db.execute("SELECT last_insert_rowid() FROM books")
+    
   end
 
-  def update
-    # Your code here
+  def update(title = @title, page_count = @page_count, genre = @genre, price = @price)
+    @title = title
+    @page_count = page_count
+    @genre = genre
+    @price = price
+    sql = <<-SQL
+      UPDATE books SET (title, page_count, genre, price) VALUES (?, ?, ?, ?) where id = ?
+    SQL
+    db.execute(sql, @title, @page_count, @genre, @price, self.id)
   end
 end
 
