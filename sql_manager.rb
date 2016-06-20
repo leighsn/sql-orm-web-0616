@@ -1,6 +1,6 @@
 require 'pry'
 require 'sqlite3'
-
+# => Worked with George
 
 class Book
   attr_accessor :title, :page_count, :genre, :price
